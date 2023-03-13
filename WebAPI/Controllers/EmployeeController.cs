@@ -56,10 +56,9 @@ namespace WebAPI.Controllers
         }
 
         [Route("api/Employee/Msg/{id}")]
-        [HttpGet]
-        public HttpResponseMessage Msg(int id)
+        public HttpResponseMessage GetMsg(int id)
         {
-            if (id > 0)
+            if (id >= 0)
             {
                 EmployeeDAO employeeDAO = new EmployeeDAO();
                 EmployeeModel employee = employeeDAO.GetEmployee(id);
@@ -93,21 +92,41 @@ namespace WebAPI.Controllers
             }
         }
 
-        [Route("api/Employee/Add")]
-        [HttpGet]
-        public HttpResponseMessage Post()
+        public HttpResponseMessage Post(string name, DateTime DOB, string designation, string homeTown)
         {
             EmployeeModel employeeModel = new EmployeeModel()
             {
-                Name = "Bruce",
-                DateOfBirth = DateTime.Now,
-                Designation = "HR Manager",
-                HomeTown = "Perth"
+                Name = name,
+                DateOfBirth = DOB,
+                Designation = designation,
+                HomeTown = homeTown
             };
             EmployeeDAO employeeDAO = new EmployeeDAO();
             if (employeeDAO.AddEmployee(employeeModel))
             {
                 return Request.CreateResponse(HttpStatusCode.OK, "Successfully Added");
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "Something went wrong");
+            }
+        }
+
+        public HttpResponseMessage Put([FromUri]int id, [FromBody]EmployeeModel employeeModel)
+        {
+            //EmployeeModel employeeModel = new EmployeeModel()
+            //{
+            //    ID = id,
+            //    Name = name,
+            //    DateOfBirth = DOB,
+            //    Designation = designation,
+            //    HomeTown = homeTown
+            //};
+            employeeModel.ID = id;
+            EmployeeDAO employeeDAO = new EmployeeDAO();
+            if (employeeDAO.UpdateEmployee(employeeModel))
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, "Successfully Updated");
             }
             else
             {

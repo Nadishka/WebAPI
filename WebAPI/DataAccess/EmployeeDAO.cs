@@ -124,5 +124,31 @@ namespace WebAPI.DataAccess
                 return false;
             }
         }
+
+        internal bool UpdateEmployee(EmployeeModel employeeModel)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connString))
+                {
+                    string sqlString = @"UPDATE Employee SET name = @name, dateOfBirth = @dateOfBirth, designation = @designation, homeTown = @homeTown WHERE Id = @Id";
+                    using (var command = new SqlCommand(sqlString, conn))
+                    {
+                        command.Parameters.Add("@Id", System.Data.SqlDbType.Int).Value = employeeModel.ID;
+                        command.Parameters.Add("@name", System.Data.SqlDbType.NVarChar).Value = employeeModel.Name;
+                        command.Parameters.Add("@dateOfBirth", System.Data.SqlDbType.SmallDateTime).Value = employeeModel.DateOfBirth;
+                        command.Parameters.Add("@designation", System.Data.SqlDbType.NVarChar).Value = employeeModel.Designation;
+                        command.Parameters.Add("@homeTown", System.Data.SqlDbType.NChar).Value = employeeModel.HomeTown;
+                        conn.Open();
+                        command.ExecuteNonQuery();
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }
