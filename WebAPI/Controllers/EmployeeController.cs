@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Remoting.Messaging;
 using System.Web.Http;
+using System.Web.Routing;
 using WebAPI.DataAccess;
 using WebAPI.Models;
 
@@ -12,7 +11,7 @@ namespace WebAPI.Controllers
 {
     public class EmployeeController : ApiController
     {
-        
+
         public IHttpActionResult Get()
         {
             EmployeeDAO employeeDAO = new EmployeeDAO();
@@ -60,11 +59,11 @@ namespace WebAPI.Controllers
         [HttpGet]
         public HttpResponseMessage Msg(int id)
         {
-            if(id > 0)
+            if (id > 0)
             {
                 EmployeeDAO employeeDAO = new EmployeeDAO();
                 EmployeeModel employee = employeeDAO.GetEmployee(id);
-                return Request.CreateResponse(HttpStatusCode.OK, "Employee name is " +employee.Name);
+                return Request.CreateResponse(HttpStatusCode.OK, "Employee name is " + employee.Name);
             }
             else
             {
@@ -91,6 +90,28 @@ namespace WebAPI.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Something went wrong");
                 }
+            }
+        }
+
+        [Route("api/Employee/Add")]
+        [HttpGet]
+        public HttpResponseMessage Post()
+        {
+            EmployeeModel employeeModel = new EmployeeModel()
+            {
+                Name = "Bruce",
+                DateOfBirth = DateTime.Now,
+                Designation = "HR Manager",
+                HomeTown = "Perth"
+            };
+            EmployeeDAO employeeDAO = new EmployeeDAO();
+            if (employeeDAO.AddEmployee(employeeModel))
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, "Successfully Added");
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "Something went wrong");
             }
         }
     }
